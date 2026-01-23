@@ -49,6 +49,7 @@
     const overlay = document.getElementById("modalOverlay");
     const content = document.getElementById("modalContent");
     const closeBtn = document.getElementById("closeModal");
+    const printBtn = document.getElementById("printModalBtn");
     const { formatter } = window.App.utils;
     const { state } = window.App;
 
@@ -92,6 +93,23 @@
     overlay.onclick = (e) => {
       if (e.target === overlay) close();
     };
+    
+    if (printBtn) {
+      printBtn.onclick = () => {
+        // Ensure the current row is selected for print card rendering
+        state.selectedId = row.__id; 
+        window.App.ui.renderPrintCard();
+        if (window.App.ui.setPrintDate) window.App.ui.setPrintDate();
+        
+        document.body.classList.add("print-selected");
+        const cleanup = () => {
+          document.body.classList.remove("print-selected");
+          window.removeEventListener("afterprint", cleanup);
+        };
+        window.addEventListener("afterprint", cleanup);
+        window.print();
+      };
+    }
     
     // Esc key
     const escHandler = function(e) {
@@ -286,5 +304,13 @@
     });
 
     elements.printCard.appendChild(grid);
+  };
+
+  window.App.ui.setPrintDate = function() {
+    const el = document.getElementById("printDate");
+    if (el) {
+      const now = new Date();
+      el.textContent = now.toLocaleDateString("pt-BR") + " " + now.toLocaleTimeString("pt-BR");
+    }
   };
 })();

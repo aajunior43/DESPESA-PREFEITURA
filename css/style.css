@@ -496,7 +496,8 @@ h1, h2, h3 {
   .table-actions,
   .pager,
   .page-size,
-  .site-footer {
+  .site-footer,
+  #modalOverlay {
     display: none !important;
   }
 
@@ -822,6 +823,12 @@ h1, h2, h3 {
   border-bottom: 1px solid var(--line);
   background: var(--surface-hover);
   border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .modal-header h2 {
