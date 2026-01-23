@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Visor de Despesas</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div id="printHeader" class="print-header">
+    <img src="assets/logo.png" alt="Bras&#227;o da Prefeitura" class="print-logo" />
+    <div>
+      <div class="print-title">Prefeitura Municipal de Inaj&#225; - Despesa p&#250;blica</div>
+      <div class="print-meta">Emitido em <span id="printDate"></span></div>
+    </div>
+  </div>
+  <header class="hero">
+    <div>
+      <div class="brand">
+        <img src="assets/logo.png" alt="Bras&#227;o da Prefeitura" class="brand-logo" />
+        <p class="kicker">Prefeitura Municipal de Inaj&#225;</p>
+      </div>
+      <h1>Despesa p&#250;blica</h1>
+    </div>
+    <div class="upload">
+      <label class="file">
+        <input id="csvFile" type="file" accept=".csv,text/csv" />
+        <span>Selecionar CSV</span>
+      </label>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section id="filters" class="panel filters">
+      <div class="filters-top">
+        <div class="field">
+          <label for="search">Busca r&#225;pida</label>
+          <input id="search" type="text" placeholder="Entidade, programa, natureza..." />
+        </div>
+        <div class="field inline">
+          <label for="minValue">Saldo m&#237;nimo</label>
+          <input id="minValue" type="number" step="0.01" placeholder="0" />
+        </div>
+        <div class="field inline">
+          <label for="maxValue">Saldo m&#225;ximo</label>
+          <input id="maxValue" type="number" step="0.01" placeholder="-" />
+        </div>
+        <button id="printView" class="ghost">Imprimir/PDF</button>
+        <button id="toggleFilters" class="ghost" aria-expanded="true">Recolher filtros</button>
+        <button id="resetFilters" class="ghost is-hidden">Limpar tudo</button>
+      </div>
+      <div id="filterChips" class="filter-chips"></div>
+      <div class="filters-grid">
+        <div class="field filter-box" data-column="Entidade">
+        <div class="filter-head">
+          <label>Entidade</label>
+          <div class="filter-actions">
+            <button type="button" data-action="all">Tudo</button>
+            <button type="button" data-action="none">Nada</button>
+          </div>
+          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+        </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
+        <div class="field filter-box" data-column="Natureza de Despesa">
+        <div class="filter-head">
+          <label>Natureza de despesa</label>
+          <div class="filter-actions">
+            <button type="button" data-action="all">Tudo</button>
+            <button type="button" data-action="none">Nada</button>
+          </div>
+          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+        </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
+        <div class="field filter-box" data-column="Recurso">
+        <div class="filter-head">
+          <label>Recurso</label>
+          <div class="filter-actions">
+            <button type="button" data-action="all">Tudo</button>
+            <button type="button" data-action="none">Nada</button>
+          </div>
+          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+        </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
+        <div class="field filter-box" data-column="Descri&#231;&#227;o do programa">
+        <div class="filter-head">
+          <label>Programa</label>
+          <div class="filter-actions">
+            <button type="button" data-action="all">Tudo</button>
+            <button type="button" data-action="none">Nada</button>
+          </div>
+          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+        </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
+        <div class="field filter-box" data-column="Descri&#231;&#227;o da fun&#231;&#227;o">
+        <div class="filter-head">
+          <label>Fun&#231;&#227;o</label>
+          <div class="filter-actions">
+            <button type="button" data-action="all">Tudo</button>
+            <button type="button" data-action="none">Nada</button>
+          </div>
+          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+        </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
+        <div class="field filter-box" data-column="Descri&#231;&#227;o da subfun&#231;&#227;o">
+        <div class="filter-head">
+          <label>Subfun&#231;&#227;o</label>
+          <div class="filter-actions">
+            <button type="button" data-action="all">Tudo</button>
+            <button type="button" data-action="none">Nada</button>
+          </div>
+          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+        </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
+        <div class="field filter-box" data-column="Descri&#231;&#227;o da a&#231;&#227;o">
+        <div class="filter-head">
+          <label>A&#231;&#227;o</label>
+          <div class="filter-actions">
+            <button type="button" data-action="all">Tudo</button>
+            <button type="button" data-action="none">Nada</button>
+          </div>
+          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+        </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="main-column">
+      <section class="panel" id="stats">
+        <div class="card">
+          <h3>Total</h3>
+          <p id="totalValue">-</p>
+        </div>
+        <div class="card">
+          <h3>Itens</h3>
+          <p id="totalRows">-</p>
+        </div>
+        <div class="card">
+          <h3>M&#233;dia por despesa</h3>
+          <p id="avgValue">-</p>
+        </div>
+        <div class="card">
+          <h3>Maior valor</h3>
+          <p id="maxValueStat">-</p>
+        </div>
+      </section>
+
+      <section class="panel table">
+        <div class="table-header">
+          <h2>Detalhamento</h2>
+          <div class="table-actions">
+            <div class="pager">
+              <button id="prevPage" class="ghost">Anterior</button>
+              <span id="pageInfo">P&#225;gina 1 de 1</span>
+              <button id="nextPage" class="ghost">Pr&#243;xima</button>
+            </div>
+            <label class="page-size">
+              <span>Linhas</span>
+              <select id="pageSize">
+                <option value="25">25</option>
+                <option value="50" selected>50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+              </select>
+            </label>
+            <button id="exportCsv" class="ghost">Exportar CSV</button>
+            <button id="printSelected" class="ghost">Imprimir selecionada</button>
+            <span id="tableCount">0 linhas</span>
+          </div>
+        </div>
+        <div id="printCard" class="print-card"></div>
+        <div class="table-wrap">
+          <table id="dataTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <span>Dev Aleksandro Alves</span>
+  </footer>
+
+  <div id="modalOverlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Detalhes da Despesa</h2>
+        <button id="closeModal" class="close-modal" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="modal-content" id="modalContent">
+        <!-- Detalhes serão inseridos via JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/modules/state.js"></script>
+  <script src="js/modules/utils.js"></script>
+  <script src="js/modules/csv.js"></script>
+  <script src="js/modules/ui.js"></script>
+  <script src="js/modules/logic.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
