@@ -32,10 +32,47 @@
     updateTable();
   };
 
+  // Calculate available options for each filter based on current filtered data
+  function getAvailableOptions(excludeFilter = null) {
+    const { state, elements } = window.App;
+    const { normalizeText } = window.App.utils;
+
+    const query = normalizeText(elements.search.value.trim());
+    const min = Number.parseFloat(elements.minValue.value) || 0;
+    const max = Number.parseFloat(elements.maxValue.value) || Infinity;
+
+    // Filter data excluding the filter being updated
+    const tempFiltered = state.rows.filter((row) => {
+      for (const filter of state.filters) {
+        if (filter === excludeFilter) continue; // Skip the filter being updated
+        if (filter.box.classList.contains("disabled")) continue;
+        const value = row[filter.column] || "";
+        if (filter.selected.size && !filter.selected.has(value)) return false;
+      }
+      if (row.__saldo < min || row.__saldo > max) return false;
+      if (!query) return true;
+      const hay = normalizeText(state.columns.map((col) => row[col]).join(" "));
+      return hay.includes(query);
+    });
+
+    // Calculate available values for each filter
+    const availableByFilter = new Map();
+    state.filters.forEach((filter) => {
+      const available = new Set();
+      tempFiltered.forEach((row) => {
+        const value = row[filter.column] || "";
+        if (value) available.add(value);
+      });
+      availableByFilter.set(filter, available);
+    });
+
+    return availableByFilter;
+  }
+
   window.App.logic.applyFilters = function () {
     const { state, elements } = window.App;
     const { normalizeText } = window.App.utils;
-    const { updateStats, updateTable, updateActiveChips } = window.App.ui;
+    const { updateStats, updateTable, updateActiveChips, renderFilterOptions } = window.App.ui;
 
     const query = normalizeText(elements.search.value.trim());
     const min = Number.parseFloat(elements.minValue.value) || 0;
@@ -55,6 +92,13 @@
       if (!query) return true;
       const hay = normalizeText(state.columns.map((col) => row[col]).join(" "));
       return hay.includes(query);
+    });
+
+    // Update available options for all filters
+    const availableByFilter = getAvailableOptions();
+    state.filters.forEach((filter) => {
+      filter.availableOptions = availableByFilter.get(filter);
+      renderFilterOptions(filter);
     });
 
     state.page = 1;

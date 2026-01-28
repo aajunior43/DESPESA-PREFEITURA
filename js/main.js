@@ -1,4 +1,4 @@
-(function() {
+(function () {
   const { state, elements } = window.App;
   const { decodeBuffer } = window.App.utils;
   const { loadCSV, applyFilters, resetFilters, initFilters, sortBy, exportVisibleCSV } = window.App.logic;
@@ -6,8 +6,8 @@
 
   UI.setSortHandler(sortBy);
   UI.setSelectHandler((id) => {
-      state.selectedId = id;
-      UI.updateTable();
+    state.selectedId = id;
+    UI.updateTable();
   });
 
   function handleFile(file) {
@@ -105,6 +105,37 @@
     });
   }
 
+  // View mode toggle (List/Grid)
+  const viewListBtn = document.getElementById("viewList");
+  const viewGridBtn = document.getElementById("viewGrid");
+  const tableWrap = document.querySelector(".table-wrap");
+
+  function setViewMode(mode) {
+    const isGrid = mode === "grid";
+
+    if (isGrid) {
+      tableWrap.classList.add("grid-mode");
+      viewGridBtn.classList.add("active");
+      viewListBtn.classList.remove("active");
+    } else {
+      tableWrap.classList.remove("grid-mode");
+      viewListBtn.classList.add("active");
+      viewGridBtn.classList.remove("active");
+    }
+
+    // Save preference
+    localStorage.setItem("viewMode", mode);
+  }
+
+  if (viewListBtn && viewGridBtn && tableWrap) {
+    viewListBtn.addEventListener("click", () => setViewMode("list"));
+    viewGridBtn.addEventListener("click", () => setViewMode("grid"));
+
+    // Load saved preference
+    const savedMode = localStorage.getItem("viewMode") || "list";
+    setViewMode(savedMode);
+  }
+
   const accordionQuery = window.matchMedia("(max-width: 900px)");
   function updateAccordionDefaults() {
     state.filters.forEach((filter) => {
@@ -131,7 +162,7 @@
       "dados/dados.csv",
       "dados/data.csv"
     ];
-    
+
     for (const path of candidates) {
       try {
         const response = await fetch(path);
@@ -139,13 +170,13 @@
           const buffer = await response.arrayBuffer();
           const text = decodeBuffer(buffer);
           loadCSV(text);
-          break; 
+          break;
         }
       } catch (e) {
         console.warn(`Could not load ${path} (likely due to file:// protocol restrictions or file not found)`, e);
       }
     }
   }
-  
+
   autoLoadCSV();
 })();

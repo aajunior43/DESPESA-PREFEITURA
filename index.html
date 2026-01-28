@@ -91,6 +91,18 @@
           <input class="filter-search" type="text" placeholder="Filtrar por texto" />
           <div class="filter-options"></div>
         </div>
+        <div class="field filter-box" data-column="Descrição do organograma">
+          <div class="filter-head">
+            <label>Departamento</label>
+            <div class="filter-actions">
+              <button type="button" data-action="all">Tudo</button>
+              <button type="button" data-action="none">Nada</button>
+            </div>
+            <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+          </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
         <div class="field filter-box" data-column="Natureza de Despesa">
           <div class="filter-head">
             <label>Natureza de despesa</label>
@@ -103,21 +115,9 @@
           <input class="filter-search" type="text" placeholder="Filtrar por texto" />
           <div class="filter-options"></div>
         </div>
-        <div class="field filter-box" data-column="Secretaria/Órgão">
+        <div class="field filter-box" data-column="Tipo de Despesa">
           <div class="filter-head">
-            <label>Secretaria/Órgão</label>
-            <div class="filter-actions">
-              <button type="button" data-action="all">Tudo</button>
-              <button type="button" data-action="none">Nada</button>
-            </div>
-            <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
-          </div>
-          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
-          <div class="filter-options"></div>
-        </div>
-        <div class="field filter-box" data-column="Área de Atuação">
-          <div class="filter-head">
-            <label>Área de Atuação</label>
+            <label>Tipo de Despesa</label>
             <div class="filter-actions">
               <button type="button" data-action="all">Tudo</button>
               <button type="button" data-action="none">Nada</button>
@@ -154,6 +154,26 @@
         <div class="table-header">
           <h2>Detalhamento</h2>
           <div class="table-actions">
+            <div class="view-toggle">
+              <button id="viewList" class="view-btn active" title="Visualização em Lista">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </button>
+              <button id="viewGrid" class="view-btn" title="Visualização em Grade">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+              </button>
+            </div>
             <div class="pager">
               <button id="prevPage" class="ghost">Anterior</button>
               <span id="pageInfo">P&#225;gina 1 de 1</span>

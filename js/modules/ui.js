@@ -18,6 +18,7 @@
     return [
       "Número da despesa",
       "Entidade",
+      "Descrição do organograma",
       "Recurso",
       "Descrição do recurso",
       "Descrição da natureza de despesa",
@@ -264,23 +265,44 @@
       filter.optionsEl.appendChild(indicator);
     }
 
+    const availableOptions = filter.availableOptions || new Set(filter.values);
+    let availableCount = 0;
+    let totalCount = 0;
+
     filter.values.forEach((value, optionIndex) => {
       const labelText = filter.labelFor ? filter.labelFor(value) : (value || "(Sem valor)");
       if (query && !normalizeText(labelText).includes(query)) return;
+
+      totalCount++;
+      const isAvailable = availableOptions.has(value);
+      if (isAvailable) availableCount++;
+
       const optionId = `filter-${filter.index}-${optionIndex}`;
       const label = document.createElement("label");
-      label.className = "filter-option";
+      label.className = "filter-option" + (isAvailable ? "" : " unavailable");
+
       const input = document.createElement("input");
       input.type = "checkbox";
       input.value = value;
       input.id = optionId;
       input.checked = filter.selected.has(value);
+      input.disabled = !isAvailable && !filter.selected.has(value);
+
       const span = document.createElement("span");
       span.textContent = labelText;
+
       label.appendChild(input);
       label.appendChild(span);
       filter.optionsEl.appendChild(label);
     });
+
+    // Add availability counter
+    if (availableCount < totalCount) {
+      const counter = document.createElement("div");
+      counter.className = "filter-counter";
+      counter.textContent = `${availableCount} de ${totalCount} disponíveis`;
+      filter.optionsEl.insertBefore(counter, filter.optionsEl.firstChild);
+    }
   };
 
   window.App.ui.renderPrintCard = function () {
