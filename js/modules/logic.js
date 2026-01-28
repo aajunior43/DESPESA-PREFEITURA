@@ -1,8 +1,14 @@
-(function() {
+(function () {
   window.App = window.App || {};
   window.App.logic = {};
 
-  window.App.logic.sortBy = function(column) {
+  // Cascade hierarchy: parent column -> child columns
+  const CASCADE_HIERARCHY = {
+    "Descrição da função": ["Descrição do programa", "Descrição da ação"],
+    "Descrição do programa": ["Descrição da ação"]
+  };
+
+  window.App.logic.sortBy = function (column) {
     const { state } = window.App;
     const { updateTable } = window.App.ui;
 
@@ -26,7 +32,7 @@
     updateTable();
   };
 
-  window.App.logic.applyFilters = function() {
+  window.App.logic.applyFilters = function () {
     const { state, elements } = window.App;
     const { normalizeText } = window.App.utils;
     const { updateStats, updateTable, updateActiveChips } = window.App.ui;
@@ -63,24 +69,24 @@
     const { applyFilters } = window.App.logic;
 
     if (type === 'search') {
-        elements.search.value = "";
+      elements.search.value = "";
     } else if (type === 'min') {
-        elements.minValue.value = "";
+      elements.minValue.value = "";
     } else if (type === 'max') {
-        elements.maxValue.value = "";
+      elements.maxValue.value = "";
     } else if (type === 'filter_select') {
-        filter.selected.clear();
-        renderFilterOptions(filter);
+      filter.selected.clear();
+      renderFilterOptions(filter);
     } else if (type === 'filter_query') {
-        filter.search.value = "";
-        filter.query = "";
-        filter.rawQuery = "";
-        renderFilterOptions(filter);
+      filter.search.value = "";
+      filter.query = "";
+      filter.rawQuery = "";
+      renderFilterOptions(filter);
     }
     applyFilters();
   }
 
-  window.App.logic.resetFilters = function() {
+  window.App.logic.resetFilters = function () {
     const { state, elements } = window.App;
     const { renderFilterOptions } = window.App.ui;
     const { applyFilters } = window.App.logic;
@@ -98,7 +104,66 @@
     applyFilters();
   };
 
-  window.App.logic.loadCSV = function(text) {
+  // Update cascade filter options based on parent selections
+  window.App.logic.updateCascadeFilters = function () {
+    const { state } = window.App;
+    const { renderFilterOptions } = window.App.ui;
+
+    state.filters.forEach((childFilter) => {
+      // Check if this filter has a parent in the cascade hierarchy
+      let parentColumn = null;
+      for (const [parent, children] of Object.entries(CASCADE_HIERARCHY)) {
+        if (children.includes(childFilter.column)) {
+          parentColumn = parent;
+          break;
+        }
+      }
+
+      if (!parentColumn) return; // No parent, skip cascade
+
+      // Find the parent filter
+      const parentFilter = state.filters.find(f => f.column === parentColumn);
+      if (!parentFilter || parentFilter.selected.size === 0) {
+        // No parent selections, show all options
+        const values = new Set();
+        state.rows.forEach((row) => {
+          values.add(row[childFilter.column] || "");
+        });
+        childFilter.values = Array.from(values).sort((a, b) =>
+          a.localeCompare(b, "pt-BR", { numeric: true })
+        );
+        childFilter.cascadeActive = false;
+      } else {
+        // Parent has selections, filter child options
+        const values = new Set();
+        state.rows.forEach((row) => {
+          const parentValue = row[parentColumn] || "";
+          if (parentFilter.selected.has(parentValue)) {
+            values.add(row[childFilter.column] || "");
+          }
+        });
+        childFilter.values = Array.from(values).sort((a, b) =>
+          a.localeCompare(b, "pt-BR", { numeric: true })
+        );
+        childFilter.cascadeActive = true;
+        childFilter.cascadeParent = parentFilter.column;
+      }
+
+      // Clear selections that are no longer valid
+      const validValues = new Set(childFilter.values);
+      const toRemove = [];
+      childFilter.selected.forEach(value => {
+        if (!validValues.has(value)) {
+          toRemove.push(value);
+        }
+      });
+      toRemove.forEach(value => childFilter.selected.delete(value));
+
+      renderFilterOptions(childFilter);
+    });
+  };
+
+  window.App.logic.loadCSV = function (text) {
     const { state } = window.App;
     const { detectDelimiter, parseCSV } = window.App.csv;
     const { parseCurrency } = window.App.utils;
@@ -110,7 +175,10 @@
     if (!rows.length) return;
 
     const header = rows[0];
-    state.columns = header;
+
+    // Add virtual columns
+    state.columns = [...header, "Tipo de Gasto", "Tipo de Despesa", "Origem do Recurso", "Secretaria/Órgão", "Área de Atuação"];
+
     state.rows = rows.slice(1).map((values) => {
       const row = {};
       header.forEach((col, index) => {
@@ -118,13 +186,22 @@
       });
       row.__id = Math.random().toString(36).slice(2);
       row.__saldo = parseCurrency(row["Saldo atual da despesa"]);
+
+      // Calculate virtual columns
+      const { getTipoGasto, getTipoDespesa, getOrigemRecurso, getSecretaria, getAreaAtuacao } = window.App.utils;
+      row["Tipo de Gasto"] = getTipoGasto(row["Natureza de Despesa"]);
+      row["Tipo de Despesa"] = getTipoDespesa(row["Natureza de Despesa"]);
+      row["Origem do Recurso"] = getOrigemRecurso(row["Descrição do recurso"]);
+      row["Secretaria/Órgão"] = getSecretaria(row["Descrição do organograma"]);
+      row["Área de Atuação"] = getAreaAtuacao(row["Descrição da função"]);
+
       return row;
     });
 
     state.natureLabels = new Map();
     state.rows.forEach((row) => {
       const code = row["Natureza de Despesa"] || "";
-      const desc = row["Descri\u00e7\u00e3o da natureza de despesa"] || "";
+      const desc = row["Descrição da natureza de despesa"] || "";
       if (!code) return;
       const label = desc ? `${code} - ${desc}` : code;
       state.natureLabels.set(code, label);
@@ -161,7 +238,7 @@
     applyFilters();
   };
 
-  window.App.logic.exportVisibleCSV = function() {
+  window.App.logic.exportVisibleCSV = function () {
     const { state } = window.App;
     const { getVisibleColumns, getDisplayValue } = window.App.ui;
     if (!state.columns.length) return;
@@ -197,7 +274,7 @@
     setTimeout(() => URL.revokeObjectURL(url), 0);
   };
 
-  window.App.logic.initFilters = function() {
+  window.App.logic.initFilters = function () {
     const { state, elements } = window.App;
     const { normalizeText } = window.App.utils;
     const { renderFilterOptions } = window.App.ui;
@@ -244,21 +321,35 @@
         } else {
           filter.selected.delete(value);
         }
+
+        // Update cascade filters if this filter is a parent
+        const { updateCascadeFilters } = window.App.logic;
+        if (CASCADE_HIERARCHY[filter.column]) {
+          updateCascadeFilters();
+        }
+
         applyFilters();
       });
 
       const buttons = Array.from(filter.box.querySelectorAll("[data-action]"));
       buttons.forEach((button) => {
-          button.addEventListener("click", () => {
-              const type = button.dataset.action;
-              if (type === "all") {
-                  filter.selected = new Set(filter.values);
-              } else {
-                  filter.selected.clear();
-              }
-              renderFilterOptions(filter);
-              applyFilters();
-          });
+        button.addEventListener("click", () => {
+          const type = button.dataset.action;
+          if (type === "all") {
+            filter.selected = new Set(filter.values);
+          } else {
+            filter.selected.clear();
+          }
+          renderFilterOptions(filter);
+
+          // Update cascade filters if this filter is a parent
+          const { updateCascadeFilters } = window.App.logic;
+          if (CASCADE_HIERARCHY[filter.column]) {
+            updateCascadeFilters();
+          }
+
+          applyFilters();
+        });
       });
     });
   };

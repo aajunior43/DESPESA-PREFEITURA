@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Visor de Despesas</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
   <div class="bg-orb orb-a"></div>
   <div class="bg-orb orb-b"></div>
@@ -36,8 +38,8 @@
     <section id="filters" class="panel filters">
       <div class="filters-top">
         <div class="field">
-          <label for="search">Busca r&#225;pida</label>
-          <input id="search" type="text" placeholder="Entidade, programa, natureza..." />
+          <label for="search">Busca rápida</label>
+          <input id="search" type="text" placeholder="Busque em todos os campos: entidade, programa, ação, valor..." />
         </div>
         <div class="field inline">
           <label for="minValue">Saldo m&#237;nimo</label>
@@ -53,87 +55,75 @@
       </div>
       <div id="filterChips" class="filter-chips"></div>
       <div class="filters-grid">
-        <div class="field filter-box" data-column="Entidade">
-        <div class="filter-head">
-          <label>Entidade</label>
-          <div class="filter-actions">
-            <button type="button" data-action="all">Tudo</button>
-            <button type="button" data-action="none">Nada</button>
+        <div class="field filter-box" data-column="Recurso">
+          <div class="filter-head">
+            <label>Recurso</label>
+            <div class="filter-actions">
+              <button type="button" data-action="all">Tudo</button>
+              <button type="button" data-action="none">Nada</button>
+            </div>
+            <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
           </div>
-          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
         </div>
+        <div class="field filter-box" data-column="Descrição da função">
+          <div class="filter-head">
+            <label>Função</label>
+            <div class="filter-actions">
+              <button type="button" data-action="all">Tudo</button>
+              <button type="button" data-action="none">Nada</button>
+            </div>
+            <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+          </div>
+          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
+          <div class="filter-options"></div>
+        </div>
+        <div class="field filter-box" data-column="Descrição da ação">
+          <div class="filter-head">
+            <label>Ação</label>
+            <div class="filter-actions">
+              <button type="button" data-action="all">Tudo</button>
+              <button type="button" data-action="none">Nada</button>
+            </div>
+            <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
+          </div>
           <input class="filter-search" type="text" placeholder="Filtrar por texto" />
           <div class="filter-options"></div>
         </div>
         <div class="field filter-box" data-column="Natureza de Despesa">
-        <div class="filter-head">
-          <label>Natureza de despesa</label>
-          <div class="filter-actions">
-            <button type="button" data-action="all">Tudo</button>
-            <button type="button" data-action="none">Nada</button>
+          <div class="filter-head">
+            <label>Natureza de despesa</label>
+            <div class="filter-actions">
+              <button type="button" data-action="all">Tudo</button>
+              <button type="button" data-action="none">Nada</button>
+            </div>
+            <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
           </div>
-          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
-        </div>
           <input class="filter-search" type="text" placeholder="Filtrar por texto" />
           <div class="filter-options"></div>
         </div>
-        <div class="field filter-box" data-column="Recurso">
-        <div class="filter-head">
-          <label>Recurso</label>
-          <div class="filter-actions">
-            <button type="button" data-action="all">Tudo</button>
-            <button type="button" data-action="none">Nada</button>
+        <div class="field filter-box" data-column="Secretaria/Órgão">
+          <div class="filter-head">
+            <label>Secretaria/Órgão</label>
+            <div class="filter-actions">
+              <button type="button" data-action="all">Tudo</button>
+              <button type="button" data-action="none">Nada</button>
+            </div>
+            <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
           </div>
-          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
-        </div>
           <input class="filter-search" type="text" placeholder="Filtrar por texto" />
           <div class="filter-options"></div>
         </div>
-        <div class="field filter-box" data-column="Descri&#231;&#227;o do programa">
-        <div class="filter-head">
-          <label>Programa</label>
-          <div class="filter-actions">
-            <button type="button" data-action="all">Tudo</button>
-            <button type="button" data-action="none">Nada</button>
+        <div class="field filter-box" data-column="Área de Atuação">
+          <div class="filter-head">
+            <label>Área de Atuação</label>
+            <div class="filter-actions">
+              <button type="button" data-action="all">Tudo</button>
+              <button type="button" data-action="none">Nada</button>
+            </div>
+            <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
           </div>
-          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
-        </div>
-          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
-          <div class="filter-options"></div>
-        </div>
-        <div class="field filter-box" data-column="Descri&#231;&#227;o da fun&#231;&#227;o">
-        <div class="filter-head">
-          <label>Fun&#231;&#227;o</label>
-          <div class="filter-actions">
-            <button type="button" data-action="all">Tudo</button>
-            <button type="button" data-action="none">Nada</button>
-          </div>
-          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
-        </div>
-          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
-          <div class="filter-options"></div>
-        </div>
-        <div class="field filter-box" data-column="Descri&#231;&#227;o da subfun&#231;&#227;o">
-        <div class="filter-head">
-          <label>Subfun&#231;&#227;o</label>
-          <div class="filter-actions">
-            <button type="button" data-action="all">Tudo</button>
-            <button type="button" data-action="none">Nada</button>
-          </div>
-          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
-        </div>
-          <input class="filter-search" type="text" placeholder="Filtrar por texto" />
-          <div class="filter-options"></div>
-        </div>
-        <div class="field filter-box" data-column="Descri&#231;&#227;o da a&#231;&#227;o">
-        <div class="filter-head">
-          <label>A&#231;&#227;o</label>
-          <div class="filter-actions">
-            <button type="button" data-action="all">Tudo</button>
-            <button type="button" data-action="none">Nada</button>
-          </div>
-          <button type="button" class="filter-toggle" aria-expanded="true">Fechar</button>
-        </div>
           <input class="filter-search" type="text" placeholder="Filtrar por texto" />
           <div class="filter-options"></div>
         </div>
@@ -219,4 +209,5 @@
   <script src="js/modules/logic.js"></script>
   <script src="js/main.js"></script>
 </body>
+
 </html>
