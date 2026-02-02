@@ -572,18 +572,21 @@ h3 {
 
 @media print {
   @page {
-    margin: 10mm;
+    margin: 1.5cm;
     size: A4;
   }
 
   body {
     background: #fff;
     color: #000;
-    font-size: 11pt;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10pt;
+    line-height: 1.3;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
+  /* Hide UI elements */
   .bg-orb,
   .hero,
   .filters,
@@ -593,108 +596,187 @@ h3 {
   .pager,
   .page-size,
   .site-footer,
-  #modalOverlay {
+  #modalOverlay,
+  .view-toggle {
     display: none !important;
   }
 
+  /* Print Header */
   .print-header {
     display: flex !important;
     align-items: center;
-    gap: 1.2rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
+    justify-content: space-between;
     border-bottom: 2px solid #000;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 
   .print-logo {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
+  }
+
+  .print-header div {
+    text-align: right;
   }
 
   .print-title {
     font-family: "Georgia", serif;
-    font-size: 1.6rem;
-    font-weight: 700;
+    font-size: 14pt;
+    font-weight: bold;
     text-transform: uppercase;
     margin-bottom: 0.2rem;
+    color: #000;
   }
 
   .print-meta {
-    font-size: 0.9rem;
+    font-size: 9pt;
     color: #444;
   }
 
+  /* Card View (Print Selected) */
   .print-card {
-    display: block !important;
+    display: none;
     background: #fff;
-    border: 2px solid #000;
-    border-radius: 0;
-    padding: 2.5rem;
+    border: 1px solid #000;
+    padding: 2rem;
+    margin-top: 1rem;
     box-shadow: none;
   }
 
+  .print-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid #000;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+  }
+
   .print-card-header h3 {
-    color: #000;
-    border-color: #000;
+    font-size: 16pt;
+    margin: 0;
     font-family: "Georgia", serif;
-    font-size: 1.4rem;
+    color: #000;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
   }
 
   .print-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.2rem 2.5rem;
+    gap: 1.5rem;
   }
 
   .print-card .field-row {
-    border-color: #ccc;
+    margin-bottom: 1rem;
+    border-bottom: 1px dotted #ccc;
+    padding-bottom: 0.2rem;
     page-break-inside: avoid;
   }
 
   .print-card .field-row span {
+    display: block;
+    font-size: 8pt;
+    text-transform: uppercase;
     color: #555;
-    font-size: 0.7rem;
+    margin-bottom: 2px;
+    font-weight: 600;
   }
 
   .print-card .field-row strong {
+    display: block;
+    font-size: 11pt;
     color: #000;
-    font-size: 1rem;
-    font-family: "Courier New", monospace;
+    font-family: "Times New Roman", Times, serif;
   }
 
   .print-card .field-row.is-money strong {
-    color: #000;
-    font-size: 1.3rem;
-    font-weight: 800;
+    font-size: 1.2rem;
+    font-weight: bold;
   }
 
+  /* Table View */
   .table-wrap {
-    display: none;
+    display: block !important;
+    margin: 0;
+    width: 100%;
   }
 
-  body.print-selected .table-wrap {
-    display: none;
-  }
-
-  body.print-selected .print-card {
-    display: block;
-  }
-
-  /* Keep table styles for list printing just in case */
   #dataTable {
-    font-size: 9pt;
     width: 100%;
     border-collapse: collapse;
+    font-size: 9pt;
+    display: table !important;
+  }
+
+  #dataTable thead {
+    display: table-header-group !important;
+  }
+
+  #dataTable tbody {
+    display: table-row-group !important;
+  }
+
+  #dataTable tr {
+    display: table-row !important;
+    page-break-inside: avoid;
+    border: none !important;
+    background: transparent !important;
   }
 
   #dataTable th,
   #dataTable td {
-    border: 1px solid #000;
-    padding: 4px;
-    color: #000;
+    display: table-cell !important;
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    text-align: left;
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  #dataTable th {
+    background-color: #f0f0f0 !important;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+    text-transform: uppercase;
+    font-size: 8pt;
+  }
+
+  #dataTable td::before {
+    display: none !important;
+  }
+
+  /* Reset flex layout properties from main CSS */
+  #dataTable tbody tr td {
+    display: table-cell !important;
+    margin: 0 !important;
+    min-width: auto !important;
+    flex: none !important;
+  }
+  
+  /* Specific column adjustments for print */
+  #dataTable td:nth-child(1) { font-weight: bold; width: 5%; }
+  #dataTable td:nth-child(2) { width: 8%; }
+  #dataTable td:nth-child(4) { font-family: monospace; width: 10%; }
+  #dataTable td.col-saldo { text-align: right; font-weight: bold; white-space: nowrap; }
+
+  /* Badge styling for print */
+  .area-badge {
+    border: 1px solid #000 !important;
+    background: transparent !important;
+    color: #000 !important;
+    padding: 1px 4px;
+    font-weight: normal;
+  }
+
+  /* Handle "Print Selected" state */
+  body.print-selected .table-wrap {
+    display: none !important;
+  }
+
+  body.print-selected .print-card {
+    display: block !important;
   }
 }
 
